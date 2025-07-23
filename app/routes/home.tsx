@@ -1,13 +1,19 @@
+import { isRouteErrorResponse } from "react-router";
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
-}
+export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+  async ({ request, context, params }, next) => {
+    const { searchParams } = new URL(request.url);
+    const callNext = searchParams.has("next");
 
-export default function Home() {
-  return <Welcome />;
-}
+    try {
+      callNext && (await next());
+    } catch (error) {
+      if (isRouteErrorResponse(error)) {
+        // The error is extracted in middleware. How to re-throw as if no middleware was applied?
+        console.log("Middleware route error response", error);
+      }
+      throw error;
+    }
+  },
+];

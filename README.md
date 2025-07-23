@@ -1,3 +1,5 @@
+# Try going to `localhost:5173` and `localhost:5173/?next`
+
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.
